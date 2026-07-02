@@ -1,5 +1,4 @@
 import { useState } from "react";
-import "./Login.css";
 
 function Login() {
   const [username, setUsername] = useState("");
@@ -8,56 +7,31 @@ function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    try {
-      const res = await fetch("http://localhost:5000/api/auth/login", {
+    const res = await fetch(
+      "https://portfoliobackend-qjog.onrender.com/api/auth/login",
+      {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
-      });
-
-      const data = await res.json();
-
-      if (data.token) {
-        // store token
-        localStorage.setItem("token", `Bearer ${data.token}`);
-
-        alert("Login successful 🚀");
-
-        // go to admin dashboard
-        window.location.href = "/admin";
-      } else {
-        alert(data.message);
       }
-    } catch (error) {
-      console.log(error);
-      alert("Server error");
+    );
+
+    const data = await res.json();
+
+    if (data.token) {
+      localStorage.setItem("token", `Bearer ${data.token}`);
+      window.location.href = "/admin";
+    } else {
+      alert(data.message);
     }
   };
 
   return (
-    <div className="login-container">
-      <form className="login-form" onSubmit={handleLogin}>
-        <h2>Admin Login</h2>
-
-        <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-
-        <button type="submit">Login</button>
-      </form>
-    </div>
+    <form onSubmit={handleLogin}>
+      <input value={username} onChange={(e) => setUsername(e.target.value)} />
+      <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+      <button>Login</button>
+    </form>
   );
 }
 

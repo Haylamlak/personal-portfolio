@@ -8,7 +8,7 @@ function ProjectDetails() {
   const [project, setProject] = useState(null);
 
   useEffect(() => {
-    fetch(`${BASE_URL}/projects`)
+    fetch(`${BASE_URL}/api/projects`)
       .then(res => res.json())
       .then(data => {
         const found = data.find(p => p.id === Number(id));
@@ -21,39 +21,27 @@ function ProjectDetails() {
   return (
     <div className="project-details">
 
-      <button className="back-btn" onClick={() => navigate("/")}>
-        ← Back
-      </button>
+      <button onClick={() => navigate("/")}>← Back</button>
 
-      <div className="details-container">
+      <img
+        src={`${BASE_URL}${project.image}`}
+        alt={project.title}
+      />
 
-        <img src={project.image} alt={project.title} />
+      <h1>{project.title}</h1>
+      <p>{project.description}</p>
 
-        <h1>{project.title}</h1>
+      <h3>Technologies</h3>
 
-        <p>{project.description}</p>
-
-        <h3>Technologies</h3>
-
-        <div className="tech-list">
-          {project.tech.map((t, i) => (
-            <span key={i}>{t}</span>
-          ))}
-        </div>
-
-        <div className="buttons">
-
-          <a href={project.github} target="_blank">
-            GitHub
-          </a>
-
-          <a href={project.demo} target="_blank">
-            Live Demo
-          </a>
-
-        </div>
-
+      <div>
+        {project.technologies?.split(",").map((t, i) => (
+          <span key={i}>{t}</span>
+        ))}
       </div>
+
+      <a href={project.github}>GitHub</a>
+      <a href={project.demo}>Live</a>
+
     </div>
   );
 }

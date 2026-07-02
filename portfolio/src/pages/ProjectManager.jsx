@@ -19,7 +19,7 @@ function ProjectManager() {
   const [editingId, setEditingId] = useState(null);
 
   // =============================
-  // Load Projects
+  // LOAD PROJECTS
   // =============================
   useEffect(() => {
     fetchProjects();
@@ -31,12 +31,12 @@ function ProjectManager() {
       const data = await res.json();
       setProjects(data);
     } catch (err) {
-      console.log(err);
+      console.log("Fetch error:", err);
     }
   };
 
   // =============================
-  // Input Change
+  // INPUT CHANGE
   // =============================
   const handleChange = (e) => {
     setProject({
@@ -69,7 +69,7 @@ function ProjectManager() {
       const data = await res.json();
 
       if (!res.ok) {
-        alert(data.message);
+        alert(data.message || "Upload failed");
         return;
       }
 
@@ -78,9 +78,9 @@ function ProjectManager() {
         image: data.image,
       }));
 
-      alert("Image uploaded successfully");
-    } catch (error) {
-      console.log(error);
+      alert("Image uploaded successfully 🚀");
+    } catch (err) {
+      console.log(err);
       alert("Upload failed");
     }
   };
@@ -104,7 +104,6 @@ function ProjectManager() {
       });
 
       const data = await res.json();
-
       alert(data.message);
 
       if (res.ok) {
@@ -112,12 +111,12 @@ function ProjectManager() {
         setProject(emptyProject);
       }
     } catch (err) {
-      console.log(err);
+      console.log("Add error:", err);
     }
   };
 
   // =============================
-  // EDIT
+  // EDIT PROJECT
   // =============================
   const editProject = (item) => {
     setEditingId(item.id);
@@ -136,7 +135,7 @@ function ProjectManager() {
   };
 
   // =============================
-  // UPDATE
+  // UPDATE PROJECT
   // =============================
   const updateProject = async (e) => {
     e.preventDefault();
@@ -157,7 +156,6 @@ function ProjectManager() {
       );
 
       const data = await res.json();
-
       alert(data.message);
 
       if (res.ok) {
@@ -166,12 +164,12 @@ function ProjectManager() {
         setProject(emptyProject);
       }
     } catch (err) {
-      console.log(err);
+      console.log("Update error:", err);
     }
   };
 
   // =============================
-  // DELETE
+  // DELETE PROJECT
   // =============================
   const deleteProject = async (id) => {
     if (!window.confirm("Delete this project?")) return;
@@ -190,14 +188,13 @@ function ProjectManager() {
       );
 
       const data = await res.json();
-
       alert(data.message);
 
       if (res.ok) {
         fetchProjects();
       }
     } catch (err) {
-      console.log(err);
+      console.log("Delete error:", err);
     }
   };
 
@@ -255,7 +252,6 @@ function ProjectManager() {
               objectFit: "cover",
               borderRadius: "10px",
               marginTop: "15px",
-              border: "2px solid #38bdf8",
             }}
           />
         )}
@@ -311,7 +307,10 @@ function ProjectManager() {
         {projects.map((item) => (
           <div key={item.id} className="project-item">
 
-            <img src={item.image} alt={item.title} />
+            <img
+              src={`${BASE_URL}${item.image}`}
+              alt={item.title}
+            />
 
             <div className="project-info">
               <h3>{item.title}</h3>
@@ -320,14 +319,28 @@ function ProjectManager() {
             </div>
 
             <div className="action-buttons">
-              <button onClick={() => editProject(item)}>Edit</button>
-              <button onClick={() => deleteProject(item.id)}>Delete</button>
+
+              <button
+                className="edit-btn"
+                onClick={() => editProject(item)}
+              >
+                Edit
+              </button>
+
+              <button
+                className="delete-btn"
+                onClick={() => deleteProject(item.id)}
+              >
+                Delete
+              </button>
+
             </div>
 
           </div>
         ))}
 
       </div>
+
     </div>
   );
 }
