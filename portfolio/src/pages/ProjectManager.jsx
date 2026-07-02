@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import "./ProjectManager.css";
-import { BASE_URL } from "../config";
 
+const BASE_URL = "https://portfoliobackend-qjog.onrender.com";
 
 function ProjectManager() {
   const emptyProject = {
@@ -21,16 +21,14 @@ function ProjectManager() {
   // =============================
   // Load Projects
   // =============================
-
   useEffect(() => {
     fetchProjects();
   }, []);
 
   const fetchProjects = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/projects");
+      const res = await fetch(`${BASE_URL}/api/projects`);
       const data = await res.json();
-
       setProjects(data);
     } catch (err) {
       console.log(err);
@@ -40,67 +38,63 @@ function ProjectManager() {
   // =============================
   // Input Change
   // =============================
-
   const handleChange = (e) => {
-  setProject({
-    ...project,
-    [e.target.name]: e.target.value,
-  });
-};
+    setProject({
+      ...project,
+      [e.target.name]: e.target.value,
+    });
+  };
 
-// Add here
-const handleImageUpload = async (e) => {
-  const file = e.target.files[0];
+  // =============================
+  // IMAGE UPLOAD
+  // =============================
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
-  if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      alert("Image must be smaller than 5MB");
+      return;
+    }
 
-  if (file.size > 5 * 1024 * 1024) {
-  alert("Image must be smaller than 5MB");
-  return;
-}
+    const formData = new FormData();
+    formData.append("image", file);
 
-  const formData = new FormData();
-  formData.append("image", file);
-
-  try {
-    const res = await fetch(
-      "http://localhost:5000/api/upload",
-      {
+    try {
+      const res = await fetch(`${BASE_URL}/api/upload`, {
         method: "POST",
         body: formData,
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.message);
+        return;
       }
-    );
 
-    const data = await res.json();
+      setProject((prev) => ({
+        ...prev,
+        image: data.image,
+      }));
 
-    if (!res.ok) {
-  alert(data.message);
-  return;
-}
-
-setProject((prev) => ({
-  ...prev,
-  image: data.image,
-}));
-
-alert("✅ Image uploaded successfully");
-  } catch (error) {
-    console.log(error);
-    alert("Upload failed");
-  }
-};
+      alert("Image uploaded successfully");
+    } catch (error) {
+      console.log(error);
+      alert("Upload failed");
+    }
+  };
 
   // =============================
   // ADD PROJECT
   // =============================
-
   const addProject = async (e) => {
     e.preventDefault();
 
     try {
       const token = localStorage.getItem("token");
 
-      const res = await fetch("http://localhost:5000/api/projects", {
+      const res = await fetch(`${BASE_URL}/api/projects`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -125,7 +119,6 @@ alert("✅ Image uploaded successfully");
   // =============================
   // EDIT
   // =============================
-
   const editProject = (item) => {
     setEditingId(item.id);
 
@@ -139,16 +132,12 @@ alert("✅ Image uploaded successfully");
       technologies: item.technologies,
     });
 
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   // =============================
   // UPDATE
   // =============================
-
   const updateProject = async (e) => {
     e.preventDefault();
 
@@ -156,7 +145,7 @@ alert("✅ Image uploaded successfully");
       const token = localStorage.getItem("token");
 
       const res = await fetch(
-        `http://localhost:5000/api/projects/${editingId}`,
+        `${BASE_URL}/api/projects/${editingId}`,
         {
           method: "PUT",
           headers: {
@@ -173,9 +162,7 @@ alert("✅ Image uploaded successfully");
 
       if (res.ok) {
         fetchProjects();
-
         setEditingId(null);
-
         setProject(emptyProject);
       }
     } catch (err) {
@@ -186,7 +173,6 @@ alert("✅ Image uploaded successfully");
   // =============================
   // DELETE
   // =============================
-
   const deleteProject = async (id) => {
     if (!window.confirm("Delete this project?")) return;
 
@@ -194,7 +180,7 @@ alert("✅ Image uploaded successfully");
       const token = localStorage.getItem("token");
 
       const res = await fetch(
-        `http://localhost:5000/api/projects/${id}`,
+        `${BASE_URL}/api/projects/${id}`,
         {
           method: "DELETE",
           headers: {
@@ -218,7 +204,6 @@ alert("✅ Image uploaded successfully");
   // =============================
   // UI
   // =============================
-
   return (
     <div className="project-manager">
 
@@ -226,9 +211,7 @@ alert("✅ Image uploaded successfully");
         {editingId ? "Update Project" : "Project Manager"}
       </h1>
 
-      <form
-        onSubmit={editingId ? updateProject : addProject}
-      >
+      <form onSubmit={editingId ? updateProject : addProject}>
 
         <input
           type="text"
@@ -257,25 +240,25 @@ alert("✅ Image uploaded successfully");
         />
 
         <input
-  type="file"
-  accept="image/*"
-  onChange={handleImageUpload}
-/>
+          type="file"
+          accept="image/*"
+          onChange={handleImageUpload}
+        />
 
-{project.image && (
-  <img
-    src={`${BASE_URL}${project.image}`}
-    alt="Preview"
-    style={{
-      width: "220px",
-      height: "140px",
-      objectFit: "cover",
-      borderRadius: "10px",
-      marginTop: "15px",
-      border: "2px solid #38bdf8",
-    }}
-  />
-)}
+        {project.image && (
+          <img
+            src={`${BASE_URL}${project.image}`}
+            alt="Preview"
+            style={{
+              width: "220px",
+              height: "140px",
+              objectFit: "cover",
+              borderRadius: "10px",
+              marginTop: "15px",
+              border: "2px solid #38bdf8",
+            }}
+          />
+        )}
 
         <input
           type="text"
@@ -326,53 +309,25 @@ alert("✅ Image uploaded successfully");
       <div className="projects-list">
 
         {projects.map((item) => (
+          <div key={item.id} className="project-item">
 
-          <div
-            key={item.id}
-            className="project-item"
-          >
-
-            <img
-              src={item.image}
-              alt={item.title}
-            />
+            <img src={item.image} alt={item.title} />
 
             <div className="project-info">
-
               <h3>{item.title}</h3>
-
               <p>{item.category}</p>
-
               <small>{item.technologies}</small>
-
             </div>
 
             <div className="action-buttons">
-
-              <button
-                type="button"
-                className="edit-btn"
-                onClick={() => editProject(item)}
-              >
-                Edit
-              </button>
-
-              <button
-                type="button"
-                className="delete-btn"
-                onClick={() => deleteProject(item.id)}
-              >
-                Delete
-              </button>
-
+              <button onClick={() => editProject(item)}>Edit</button>
+              <button onClick={() => deleteProject(item.id)}>Delete</button>
             </div>
 
           </div>
-
         ))}
 
       </div>
-
     </div>
   );
 }
