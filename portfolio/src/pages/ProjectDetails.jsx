@@ -5,43 +5,101 @@ import { BASE_URL } from "../config";
 function ProjectDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [project, setProject] = useState(null);
 
+  const [project, setProject] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  // =============================
+  // FETCH PROJECT FROM API
+  // =============================
   useEffect(() => {
-    fetch(`${BASE_URL}/api/projects`)
-      .then(res => res.json())
-      .then(data => {
-        const found = data.find(p => p.id === Number(id));
-        setProject(found);
-      });
+    fetchProject();
   }, [id]);
 
-  if (!project) return <h2>Loading...</h2>;
+  const fetchProject = async () => {
+    try {
+      const res = await fetch(`${BASE_URL}/api/projects`);
+      const data = await res.json();
+
+      const found = data.find((p) => p.id === Number(id));
+      setProject(found);
+
+      setLoading(false);
+    } catch (error) {
+      console.log("Error:", error);
+      setLoading(false);
+    }
+  };
+
+  // =============================
+  // LOADING STATE
+  // =============================
+  if (loading) return <h2>Loading project...</h2>;
+
+  if (!project) return <h2>Project not found</h2>;
 
   return (
     <div className="project-details">
 
-      <button onClick={() => navigate("/")}>← Back</button>
+      {/* BACK BUTTON */}
+      <button
+        className="back-btn"
+        onClick={() => navigate("/")}
+      >
+        ← Back
+      </button>
 
-      <img
-        src={`${BASE_URL}${project.image}`}
-        alt={project.title}
-      />
+      <div className="details-container">
 
-      <h1>{project.title}</h1>
-      <p>{project.description}</p>
+        {/* IMAGE */}
+        <img
+          src={
+            project.image?.startsWith("http")
+              ? project.image
+              : `${BASE_URL}${project.image}`
+          }
+          alt={project.title}
+        />
 
-      <h3>Technologies</h3>
+        {/* TITLE */}
+        <h1>{project.title}</h1>
 
-      <div>
-        {project.technologies?.split(",").map((t, i) => (
-          <span key={i}>{t}</span>
-        ))}
+        {/* DESCRIPTION */}
+        <p>{project.description}</p>
+
+        {/* TECHNOLOGIES */}
+        <h3>Technologies</h3>
+
+        <div className="tech-list">
+          {project.technologies
+            ?.split(",")
+            .map((tech, index) => (
+              <span key={index}>{tech.trim()}</span>
+            ))}
+        </div>
+
+        {/* BUTTONS */}
+        <div className="buttons">
+
+          <a
+            href={project.github}
+            target="_blank"
+            rel="noreferrer"
+          >
+            GitHub
+          </a>
+
+          <a
+            href={project.demo}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Live Demo
+          </a>
+
+        </div>
+
       </div>
-
-      <a href={project.github}>GitHub</a>
-      <a href={project.demo}>Live</a>
-
     </div>
   );
 }

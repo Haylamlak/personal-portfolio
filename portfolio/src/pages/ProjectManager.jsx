@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import "./ProjectManager.css";
-
-const BASE_URL = "https://portfoliobackend-qjog.onrender.com";
+import { BASE_URL } from "../config";
 
 function ProjectManager() {
   const emptyProject = {
@@ -17,6 +16,7 @@ function ProjectManager() {
   const [project, setProject] = useState(emptyProject);
   const [projects, setProjects] = useState([]);
   const [editingId, setEditingId] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   // =============================
   // LOAD PROJECTS
@@ -29,6 +29,7 @@ function ProjectManager() {
     try {
       const res = await fetch(`${BASE_URL}/api/projects`);
       const data = await res.json();
+
       setProjects(data);
     } catch (err) {
       console.log("Fetch error:", err);
@@ -69,7 +70,7 @@ function ProjectManager() {
       const data = await res.json();
 
       if (!res.ok) {
-        alert(data.message || "Upload failed");
+        alert(data.message);
         return;
       }
 
@@ -78,9 +79,9 @@ function ProjectManager() {
         image: data.image,
       }));
 
-      alert("Image uploaded successfully 🚀");
-    } catch (err) {
-      console.log(err);
+      alert("Image uploaded successfully ✅");
+    } catch (error) {
+      console.log(error);
       alert("Upload failed");
     }
   };
@@ -90,6 +91,7 @@ function ProjectManager() {
   // =============================
   const addProject = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
       const token = localStorage.getItem("token");
@@ -104,6 +106,7 @@ function ProjectManager() {
       });
 
       const data = await res.json();
+
       alert(data.message);
 
       if (res.ok) {
@@ -111,8 +114,10 @@ function ProjectManager() {
         setProject(emptyProject);
       }
     } catch (err) {
-      console.log("Add error:", err);
+      console.log(err);
     }
+
+    setLoading(false);
   };
 
   // =============================
@@ -139,6 +144,7 @@ function ProjectManager() {
   // =============================
   const updateProject = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
       const token = localStorage.getItem("token");
@@ -156,6 +162,7 @@ function ProjectManager() {
       );
 
       const data = await res.json();
+
       alert(data.message);
 
       if (res.ok) {
@@ -164,8 +171,10 @@ function ProjectManager() {
         setProject(emptyProject);
       }
     } catch (err) {
-      console.log("Update error:", err);
+      console.log(err);
     }
+
+    setLoading(false);
   };
 
   // =============================
@@ -188,13 +197,14 @@ function ProjectManager() {
       );
 
       const data = await res.json();
+
       alert(data.message);
 
       if (res.ok) {
         fetchProjects();
       }
     } catch (err) {
-      console.log("Delete error:", err);
+      console.log(err);
     }
   };
 
@@ -208,6 +218,7 @@ function ProjectManager() {
         {editingId ? "Update Project" : "Project Manager"}
       </h1>
 
+      {/* FORM */}
       <form onSubmit={editingId ? updateProject : addProject}>
 
         <input
@@ -236,6 +247,7 @@ function ProjectManager() {
           required
         />
 
+        {/* IMAGE UPLOAD */}
         <input
           type="file"
           accept="image/*"
@@ -244,14 +256,16 @@ function ProjectManager() {
 
         {project.image && (
           <img
-            src={`${BASE_URL}${project.image}`}
+            src={
+              project.image.startsWith("http")
+                ? project.image
+                : `${BASE_URL}${project.image}`
+            }
             alt="Preview"
             style={{
-              width: "220px",
-              height: "140px",
-              objectFit: "cover",
+              width: "200px",
+              marginTop: "10px",
               borderRadius: "10px",
-              marginTop: "15px",
             }}
           />
         )}
@@ -280,8 +294,12 @@ function ProjectManager() {
           onChange={handleChange}
         />
 
-        <button type="submit">
-          {editingId ? "Update Project" : "Add Project"}
+        <button type="submit" disabled={loading}>
+          {loading
+            ? "Processing..."
+            : editingId
+            ? "Update Project"
+            : "Add Project"}
         </button>
 
         {editingId && (
@@ -300,6 +318,7 @@ function ProjectManager() {
 
       <hr />
 
+      {/* PROJECT LIST */}
       <h2>All Projects</h2>
 
       <div className="projects-list">
@@ -308,32 +327,23 @@ function ProjectManager() {
           <div key={item.id} className="project-item">
 
             <img
-              src={`${BASE_URL}${item.image}`}
+              src={
+                item.image.startsWith("http")
+                  ? item.image
+                  : `${BASE_URL}${item.image}`
+              }
               alt={item.title}
             />
 
-            <div className="project-info">
+            <div>
               <h3>{item.title}</h3>
               <p>{item.category}</p>
               <small>{item.technologies}</small>
             </div>
 
             <div className="action-buttons">
-
-              <button
-                className="edit-btn"
-                onClick={() => editProject(item)}
-              >
-                Edit
-              </button>
-
-              <button
-                className="delete-btn"
-                onClick={() => deleteProject(item.id)}
-              >
-                Delete
-              </button>
-
+              <button onClick={() => editProject(item)}>Edit</button>
+              <button onClick={() => deleteProject(item.id)}>Delete</button>
             </div>
 
           </div>

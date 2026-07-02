@@ -7,28 +7,60 @@ dotenv.config();
 
 const app = express();
 
-// Database
+// ===============================
+// DATABASE CONNECTION
+// ===============================
 require("./config/db");
 
-// Middleware
-app.use(cors());
+// ===============================
+// MIDDLEWARE
+// ===============================
+
 app.use(express.json());
 
-// Static folder
+// 🔥 FIX CORS for Vercel frontend
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:3000",
+  "https://personal-portfolio-ten-tau-27.vercel.app"
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      callback(new Error("Not allowed by CORS"));
+    },
+    credentials: true,
+  })
+);
+
+// ===============================
+// STATIC FILES (IMAGES)
+// ===============================
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Routes
+// ===============================
+// ROUTES
+// ===============================
 app.use("/api/contact", require("./routes/contactRoutes"));
 app.use("/api/projects", require("./routes/projectRoutes"));
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/upload", require("./routes/uploadRoutes"));
 
-// Test
+// ===============================
+// HEALTH CHECK ROUTE
+// ===============================
 app.get("/", (req, res) => {
   res.send("Backend Running 🚀");
 });
 
-// Server
+// ===============================
+// START SERVER
+// ===============================
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {

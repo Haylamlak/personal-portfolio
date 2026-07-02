@@ -12,7 +12,7 @@ function Projects() {
   const navigate = useNavigate();
 
   // =============================
-  // FETCH PROJECTS
+  // FETCH PROJECTS FROM BACKEND
   // =============================
   useEffect(() => {
     fetchProjects();
@@ -32,15 +32,13 @@ function Projects() {
   };
 
   // =============================
-  // FILTER LOGIC (SAFE FIX)
+  // FILTER LOGIC
   // =============================
   const filteredProjects =
     filter === "all"
       ? projects
       : projects.filter((p) =>
-          (p.category || "")
-            .replace(/\s+/g, "")
-            .toLowerCase() === filter.toLowerCase()
+          p.category?.toLowerCase().includes(filter.toLowerCase())
         );
 
   // =============================
@@ -54,12 +52,10 @@ function Projects() {
     );
   }
 
-  // =============================
-  // UI
-  // =============================
   return (
     <section className="projects" id="projects">
 
+      {/* TITLE */}
       <div className="section-title">
         <h2>My Projects</h2>
         <p>Some of my recent work</p>
@@ -67,31 +63,12 @@ function Projects() {
 
       {/* FILTER BUTTONS */}
       <div className="filter-buttons">
-
-        <button
-          className={filter === "all" ? "active" : ""}
-          onClick={() => setFilter("all")}
-        >
-          All
-        </button>
-
-        <button
-          className={filter === "frontend" ? "active" : ""}
-          onClick={() => setFilter("frontend")}
-        >
-          Frontend
-        </button>
-
-        <button
-          className={filter === "fullstack" ? "active" : ""}
-          onClick={() => setFilter("fullstack")}
-        >
-          Full Stack
-        </button>
-
+        <button onClick={() => setFilter("all")}>All</button>
+        <button onClick={() => setFilter("frontend")}>Frontend</button>
+        <button onClick={() => setFilter("fullstack")}>Full Stack</button>
       </div>
 
-      {/* PROJECT GRID */}
+      {/* PROJECT LIST */}
       <div className="project-grid">
 
         {filteredProjects.map((project, index) => (
@@ -100,21 +77,22 @@ function Projects() {
             className="project-card"
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.5,
-              delay: index * 0.1,
-            }}
+            transition={{ duration: 0.5, delay: index * 0.1 }}
             viewport={{ once: true }}
           >
 
-            {/* IMAGE (FIXED FOR RENDER) */}
+            {/* IMAGE */}
             <div
               className="project-img"
               onClick={() => navigate(`/project/${project.id}`)}
               style={{ cursor: "pointer" }}
             >
               <img
-                src={`${BASE_URL}${project.image}`}
+                src={
+                  project.image?.startsWith("http")
+                    ? project.image
+                    : `${BASE_URL}${project.image}`
+                }
                 alt={project.title}
               />
             </div>
@@ -128,20 +106,15 @@ function Projects() {
 
               {/* TECH STACK */}
               <div className="tech-stack">
-
                 {project.technologies
                   ?.split(",")
-                  .map((tech, index) => (
-                    <span key={index}>
-                      {tech.trim()}
-                    </span>
+                  .map((tech, i) => (
+                    <span key={i}>{tech.trim()}</span>
                   ))}
-
               </div>
 
               {/* BUTTONS */}
               <div className="project-buttons">
-
                 <a
                   href={project.github}
                   target="_blank"
@@ -157,7 +130,6 @@ function Projects() {
                 >
                   Live Demo
                 </a>
-
               </div>
 
             </div>

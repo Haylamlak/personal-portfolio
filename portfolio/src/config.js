@@ -1,1 +1,3 @@
-export const BASE_URL = "https://portfoliobackend-qjog.onrender.com/api";
+const BASE_URL = "https://portfoliobackend-qjog.onrender.com";
+
+export { BASE_URL };
