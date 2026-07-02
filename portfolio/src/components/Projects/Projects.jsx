@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { BASE_URL } from "../../config";
 
-
 function Projects() {
   const [filter, setFilter] = useState("all");
   const [projects, setProjects] = useState([]);
@@ -12,6 +11,9 @@ function Projects() {
 
   const navigate = useNavigate();
 
+  // =============================
+  // FETCH PROJECTS
+  // =============================
   useEffect(() => {
     fetchProjects();
   }, []);
@@ -24,20 +26,26 @@ function Projects() {
       setProjects(data);
       setLoading(false);
     } catch (error) {
-      console.log(error);
+      console.log("Fetch error:", error);
       setLoading(false);
     }
   };
 
+  // =============================
+  // FILTER LOGIC (SAFE FIX)
+  // =============================
   const filteredProjects =
     filter === "all"
       ? projects
       : projects.filter((p) =>
-          p.category
+          (p.category || "")
             .replace(/\s+/g, "")
             .toLowerCase() === filter.toLowerCase()
         );
 
+  // =============================
+  // LOADING STATE
+  // =============================
   if (loading) {
     return (
       <section className="projects">
@@ -46,6 +54,9 @@ function Projects() {
     );
   }
 
+  // =============================
+  // UI
+  // =============================
   return (
     <section className="projects" id="projects">
 
@@ -54,6 +65,7 @@ function Projects() {
         <p>Some of my recent work</p>
       </div>
 
+      {/* FILTER BUTTONS */}
       <div className="filter-buttons">
 
         <button
@@ -79,10 +91,10 @@ function Projects() {
 
       </div>
 
+      {/* PROJECT GRID */}
       <div className="project-grid">
 
         {filteredProjects.map((project, index) => (
-
           <motion.div
             key={project.id}
             className="project-card"
@@ -95,6 +107,7 @@ function Projects() {
             viewport={{ once: true }}
           >
 
+            {/* IMAGE (FIXED FOR RENDER) */}
             <div
               className="project-img"
               onClick={() => navigate(`/project/${project.id}`)}
@@ -104,15 +117,16 @@ function Projects() {
                 src={`${BASE_URL}${project.image}`}
                 alt={project.title}
               />
-
             </div>
 
+            {/* CONTENT */}
             <div className="project-content">
 
               <h3>{project.title}</h3>
 
               <p>{project.description}</p>
 
+              {/* TECH STACK */}
               <div className="tech-stack">
 
                 {project.technologies
@@ -125,6 +139,7 @@ function Projects() {
 
               </div>
 
+              {/* BUTTONS */}
               <div className="project-buttons">
 
                 <a
@@ -148,7 +163,6 @@ function Projects() {
             </div>
 
           </motion.div>
-
         ))}
 
       </div>
