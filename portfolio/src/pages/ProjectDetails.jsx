@@ -1,16 +1,22 @@
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { projects } from "../data/projects";
-import "./ProjectDetails.css";
+import { BASE_URL } from "../config";
 
 function ProjectDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [project, setProject] = useState(null);
 
-  const project = projects.find((p) => p.id === Number(id));
+  useEffect(() => {
+    fetch(`${BASE_URL}/projects`)
+      .then(res => res.json())
+      .then(data => {
+        const found = data.find(p => p.id === Number(id));
+        setProject(found);
+      });
+  }, [id]);
 
-  if (!project) {
-    return <h2>Project not found</h2>;
-  }
+  if (!project) return <h2>Loading...</h2>;
 
   return (
     <div className="project-details">
