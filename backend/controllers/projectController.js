@@ -1,18 +1,29 @@
 const db = require("../config/db");
 
+// ===============================
 // GET ALL PROJECTS
-exports.getProjects = (req, res) => {
-  const sql = "SELECT * FROM projects ORDER BY id DESC";
+// ===============================
 
-  db.query(sql, (err, result) => {
-    if (err) return res.status(500).json(err);
+exports.getProjects = async (req, res) => {
+  try {
+    const result = await db.query(
+      "SELECT * FROM projects ORDER BY id DESC"
+    );
 
-    res.json(result);
-  });
+    res.json(result.rows);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "Database error",
+    });
+  }
 };
 
+// ===============================
 // ADD PROJECT
-exports.addProject = (req, res) => {
+// ===============================
+
+exports.addProject = async (req, res) => {
   const {
     title,
     description,
@@ -23,27 +34,52 @@ exports.addProject = (req, res) => {
     technologies,
   } = req.body;
 
-  const sql = `
-    INSERT INTO projects
-    (title, description, category, image, github, demo, technologies)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
-  `;
+  try {
+    await db.query(
+      `
+      INSERT INTO projects
+      (
+        title,
+        description,
+        category,
+        image,
+        github,
+        demo,
+        technologies
+      )
+      VALUES
+      ($1,$2,$3,$4,$5,$6,$7)
+      `,
+      [
+        title,
+        description,
+        category,
+        image,
+        github,
+        demo,
+        technologies,
+      ]
+    );
 
-  db.query(
-    sql,
-    [title, description, category, image, github, demo, technologies],
-    (err) => {
-      if (err) return res.status(500).json(err);
+    res.json({
+      message: "Project added successfully 🚀",
+    });
 
-      res.json({
-        message: "Project added successfully 🚀",
-      });
-    }
-  );
+  } catch (err) {
+    console.log(err);
+
+    res.status(500).json({
+      message: "Database error",
+    });
+  }
 };
 
+// ===============================
 // UPDATE PROJECT
-exports.updateProject = (req, res) => {
+// ===============================
+
+exports.updateProject = async (req, res) => {
+
   const { id } = req.params;
 
   const {
@@ -56,54 +92,76 @@ exports.updateProject = (req, res) => {
     technologies,
   } = req.body;
 
-  const sql = `
-    UPDATE projects
-    SET
-      title=?,
-      description=?,
-      category=?,
-      image=?,
-      github=?,
-      demo=?,
-      technologies=?
-    WHERE id=?
-  `;
+  try {
 
-  db.query(
-    sql,
-    [
-      title,
-      description,
-      category,
-      image,
-      github,
-      demo,
-      technologies,
-      id,
-    ],
-    (err) => {
-      if (err) return res.status(500).json(err);
+    await db.query(
+      `
+      UPDATE projects
+      SET
+        title=$1,
+        description=$2,
+        category=$3,
+        image=$4,
+        github=$5,
+        demo=$6,
+        technologies=$7
+      WHERE id=$8
+      `,
+      [
+        title,
+        description,
+        category,
+        image,
+        github,
+        demo,
+        technologies,
+        id,
+      ]
+    );
 
-      res.json({
-        message: "Project updated successfully ✏️",
-      });
-    }
-  );
+    res.json({
+      message: "Project updated successfully ✏️",
+    });
+
+  } catch (err) {
+
+    console.log(err);
+
+    res.status(500).json({
+      message: "Database error",
+    });
+
+  }
+
 };
 
+// ===============================
 // DELETE PROJECT
-exports.deleteProject = (req, res) => {
+// ===============================
+
+exports.deleteProject = async (req, res) => {
+
   const { id } = req.params;
 
-  db.query(
-    "DELETE FROM projects WHERE id=?",
-    [id],
-    (err) => {
-      if (err) return res.status(500).json(err);
+  try {
 
-      res.json({
-        message: "Project deleted successfully 🗑️",
-      });
-    }
-  );
+    await db.query(
+      "DELETE FROM projects WHERE id=$1",
+      [id]
+    );
+
+    res.json({
+      message: "Project deleted successfully 🗑️",
+    });
+
+  } catch (err) {
+
+    console.log(err);
+
+    res.status(500).json({
+      message: "Database error",
+    });
+
+  }
+
 };
