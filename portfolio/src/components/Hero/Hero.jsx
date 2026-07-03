@@ -99,7 +99,7 @@ function Hero() {
             </a>
 
             <a
-              href="https://telegram.org/"
+              href="https://t.me/emalene6"
               target="_blank"
               rel="noreferrer"
             >

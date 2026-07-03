@@ -29,6 +29,12 @@ body{
     align-items:center;
 }
 
+/* ✅ ADD THIS */
+.logo a {
+    display: flex;
+    align-items: center;
+}
+
 .logo img{
     width:45px;
     height:45px;
@@ -39,7 +45,6 @@ body{
 
     transition:0.3s;
 
-    /* professional glow */
     box-shadow: 0 0 10px rgba(56,189,248,0.4);
 }
 
@@ -63,7 +68,6 @@ body{
     position:relative;
 }
 
-/* underline animation */
 .nav-links a::after{
     content:"";
     position:absolute;

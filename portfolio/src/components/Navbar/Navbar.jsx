@@ -17,9 +17,11 @@ function Navbar() {
   return (
     <nav className="navbar">
 
-      {/* LOGO ONLY */}
+      {/* LOGO (CLICK GO HOME) */}
       <div className="logo">
-        <img src="/favicon.png" alt="H Logo" />
+        <Link to="home" smooth={true} duration={500} onClick={closeMenu}>
+          <img src="/favicon.png" alt="H Logo" />
+        </Link>
       </div>
 
       {/* NAV LINKS */}

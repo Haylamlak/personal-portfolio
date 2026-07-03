@@ -40,7 +40,7 @@ function Footer() {
             <FaLinkedin />
           </a>
 
-          <a href="https://t.me/" target="_blank">
+          <a href="https://t.me/emalene6" target="_blank">
             <FaTelegram />
           </a>
 
