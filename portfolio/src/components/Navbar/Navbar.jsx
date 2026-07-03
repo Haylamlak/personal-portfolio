@@ -20,7 +20,7 @@ function Navbar() {
     <nav className="navbar">
 
       <div className="logo">
-        <h2>Haylamlak</h2>
+        <h2><img src="favicon.png" alt="" /></h2>
       </div>
 
       <ul className={menuOpen ? "nav-links active" : "nav-links"}>
