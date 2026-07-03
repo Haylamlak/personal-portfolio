@@ -8,6 +8,7 @@ body{
     font-family:Arial, Helvetica, sans-serif;
 }
 
+/* NAVBAR */
 .navbar{
     position:sticky;
     top:0;
@@ -22,11 +23,32 @@ body{
     background:#111827;
 }
 
-.logo h2{
-    color:white;
-    font-size:28px;
+/* LOGO ONLY (NO TEXT) */
+.logo{
+    display:flex;
+    align-items:center;
 }
 
+.logo img{
+    width:45px;
+    height:45px;
+
+    border-radius:12px;
+
+    cursor:pointer;
+
+    transition:0.3s;
+
+    /* professional glow */
+    box-shadow: 0 0 10px rgba(56,189,248,0.4);
+}
+
+.logo img:hover{
+    transform:scale(1.15) rotate(5deg);
+    box-shadow: 0 0 20px rgba(56,189,248,0.8);
+}
+
+/* NAV LINKS */
 .nav-links{
     display:flex;
     gap:35px;
@@ -38,12 +60,30 @@ body{
     text-decoration:none;
     font-size:17px;
     transition:.3s;
+    position:relative;
+}
+
+/* underline animation */
+.nav-links a::after{
+    content:"";
+    position:absolute;
+    left:0;
+    bottom:-5px;
+    width:0%;
+    height:2px;
+    background:#38bdf8;
+    transition:0.3s;
+}
+
+.nav-links a:hover::after{
+    width:100%;
 }
 
 .nav-links a:hover{
     color:#38bdf8;
 }
 
+/* MOBILE */
 .menu-icon{
     display:none;
     color:white;
@@ -55,7 +95,7 @@ body{
 
 .nav-links{
     position:absolute;
-    top:80px;
+    top:70px;
     left:-100%;
 
     width:100%;
@@ -77,26 +117,18 @@ body{
     display:block;
 }
 
+.logo img{
+    width:40px;
+    height:40px;
 }
 
+}
 
-/* Smooth scrolling behavior */
+/* smooth scroll */
 html {
   scroll-behavior: smooth;
 }
 
-/* Improve clickable links */
 .nav-links li {
   cursor: pointer;
-}
-
-.nav-links a,
-.nav-links li {
-  color: white;
-  font-size: 17px;
-  transition: 0.3s;
-}
-
-.nav-links li:hover {
-  color: #38bdf8;
 }

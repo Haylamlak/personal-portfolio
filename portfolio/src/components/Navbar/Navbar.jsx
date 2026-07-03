@@ -1,8 +1,6 @@
 import "./Navbar.css";
 import { useState } from "react";
-
 import { Link } from "react-scroll";
-
 import { FaBars, FaTimes } from "react-icons/fa";
 
 function Navbar() {
@@ -19,10 +17,12 @@ function Navbar() {
   return (
     <nav className="navbar">
 
+      {/* LOGO ONLY */}
       <div className="logo">
-        <h2><img src="favicon.png" alt="" /></h2>
+        <img src="/favicon.png" alt="H Logo" />
       </div>
 
+      {/* NAV LINKS */}
       <ul className={menuOpen ? "nav-links active" : "nav-links"}>
 
         <li>
@@ -63,6 +63,7 @@ function Navbar() {
 
       </ul>
 
+      {/* MOBILE ICON */}
       <div className="menu-icon" onClick={toggleMenu}>
         {menuOpen ? <FaTimes /> : <FaBars />}
       </div>
