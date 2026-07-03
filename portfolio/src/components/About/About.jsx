@@ -34,7 +34,7 @@ function About() {
         >
 
           <img
-            src="/profile.JPG"
+            src="/code.jpeg"
             alt="profile"
           />
 
