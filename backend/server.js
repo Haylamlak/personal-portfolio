@@ -22,7 +22,7 @@ app.use(express.json());
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:3000",
-  "https://personal-portfolio-ten-tau-27.vercel.app"
+  "https://haylamlak-portfolio.vercel.app/"
 ];
 
 app.use(
