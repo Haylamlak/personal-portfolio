@@ -5,10 +5,10 @@ A modern full-stack personal portfolio website built to showcase my projects, sk
 ## 🚀 Live Demo
 
 Frontend:
-https://ecomerce-psi-rouge.vercel.app/
+https://haylamlak-portfolio.vercel.app/
 
 Backend API:
-https://brother-electronics-backend.onrender.com
+https://portfoliobackend-qjog.onrender.com
 
 ---
 
